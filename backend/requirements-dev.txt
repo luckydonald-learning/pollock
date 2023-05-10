@@ -1,0 +1,2 @@
+# openapi-to-fastapi==0.8.0
+fastapi-code-generator==0.4.2
