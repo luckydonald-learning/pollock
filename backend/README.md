@@ -16,6 +16,6 @@ The name is composed of **poll** and **lock** and is the name of a fish, the [po
 cd backend
 yarn install --dev
 
-node_modules/.bin/snc "../../../Moodle/Webprogrammierung (SoSe 23)/Projekt/Pollack.yaml" --output generated-frontend
+node_modules/.bin/snc "../../../Moodle/Webprogrammierung (SoSe 23)/Projekt/Pollack.yaml" --output ../generated-backend
 ```
 

@@ -16,6 +16,7 @@ app.use(cookieParser());
  */
 app.use('/poll', require('./routes/poll'));
 app.use('/vote', require('./routes/vote'));
+app.use('/user', require('./routes/user'));
 
 // catch 404
 app.use((req, res, next) => {
