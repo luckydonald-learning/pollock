@@ -16,8 +16,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/20
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/20/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/23
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/23/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY
@@ -25,12 +25,13 @@ CREATE TABLE "user" (
 
 CREATE TABLE "poll" (
   "id" SERIAL PRIMARY KEY,
+  "token" UUID,
+  "owner" INTEGER NOT NULL,
   "title" TEXT NOT NULL,
   "description" TEXT,
   "voices" BIGINT,
   "worst" BOOLEAN,
   "deadline" TIMESTAMP,
-  "owner" INTEGER NOT NULL,
   "visible_to_all" BOOLEAN NOT NULL DEFAULT true
 );
 
