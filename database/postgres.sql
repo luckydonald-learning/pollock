@@ -33,8 +33,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/53
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/53/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/58
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/58/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
@@ -61,13 +61,9 @@ CREATE TABLE "option" (
   "poll" BIGINT NOT NULL,
   "option" BIGINT NOT NULL,
   "text" TEXT NOT NULL,
-  "fixed_in_poll" BIGINT,
+  "fixed_answer" BOOLEAN DEFAULT false,
   PRIMARY KEY ("poll", "option")
 );
-
-CREATE INDEX "idx_option__fixed_in_poll" ON "option" ("fixed_in_poll");
-
-ALTER TABLE "option" ADD CONSTRAINT "fk_option__fixed_in_poll" FOREIGN KEY ("fixed_in_poll") REFERENCES "poll" ("id") ON DELETE SET NULL;
 
 ALTER TABLE "option" ADD CONSTRAINT "fk_option__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id") ON DELETE CASCADE;
 
@@ -123,7 +119,7 @@ INSERT INTO "option" (
   (1, 1, 'Example A'),
   (1, 2, 'Example B'),
   (1, 3, 'Example C')
-RETURNING "text", "poll", "fixed_in_poll";
+RETURNING "text", "poll", "fixed_answer";
 
 INSERT INTO "user" (
   "id", "name"
