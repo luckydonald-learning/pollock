@@ -49,7 +49,7 @@ export async function addVotePollack(options) {
           -- "option_option":
           $3,
           -- "user":
-          (SELECT "id" FROM "user" WHERE "name" = $4),
+          (SELECT "id" FROM "user" WHERE "name" = $4)
         )`,
         [
           // "id"
