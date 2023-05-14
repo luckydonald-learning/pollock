@@ -101,3 +101,21 @@ ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__user" FOREIGN KEY ("user") REFERENCE
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA "public" TO pollshed;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA "public" TO pollshed;
 
+
+INSERT INTO "poll" (
+  "id", "token", "owner", "title", "description", "voices", "worst", "visible_to_all"
+) VALUES (
+  1, 'e6f79f06-f280-11ed-b574-325096b39f47', NULL, 'Test Poll', 'A poll to test stuff', 1, TRUE, TRUE
+) RETURNING "id", "token", "owner", "title", "description", "voices", "worst", "deadline", "visible_to_all";
+
+INSERT INTO "option" (
+  "id", "text", "poll"
+) VALUES (
+  (1, 'Example A', 0), (2, 'Example B', 0), (3, 'Example C', 0)
+) RETURNING "id", "text", "poll", "fixed_in_poll";
+
+INSERT INTO "user" (
+  "id"
+) VALUES (
+  (1)
+) RETURNING "id";
