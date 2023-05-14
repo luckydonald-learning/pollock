@@ -9,7 +9,6 @@ _Pollock_ can be used to create polls, participate in them and modify them. Norm
 The name is composed of **poll** and **lock** and is the name of a fish, the [pollock](https://en.wikipedia.org/wiki/Pollock). A special thing about this fish is that it is also called **pollack**. If _Pollock_ was implemented without registration, then it would therefore be called _Pollack_, because registration is lacking.
 
 # Install
-Run the code below (adapting `YAML_FILE_PATH` to your file system path):
 
 ```shell
 yarn install --dev
@@ -18,6 +17,7 @@ yarn run dev
 ```
 
 # Generate Client code (not needed)
+Run the code below (adapting `YAML_FILE_PATH` to your file system path), if you want to newly generate client code 
 ```bash
 #  yarn add swagger-node-codegen
 cd backend
@@ -31,7 +31,6 @@ node_modules/.bin/snc  --output generated-frontend "${YAML_FILE_PATH}/${YAML_FIL
 
 
 # Test
-
 Show statistics to a poll:
 ```shell
 curl --request POST --header "Content-Type: application/json" http://localhost:3000/poll/lack/e6f79f06-f280-11ed-b574-325096b39f47
