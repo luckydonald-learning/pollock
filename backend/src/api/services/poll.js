@@ -1,4 +1,6 @@
 const ServerError = require('../../lib/error');
+const getDatabase = require('../../lib/database');
+
 /**
  * @param {Object} options
  * @throws {Error}
@@ -29,6 +31,8 @@ module.exports.addPollack = async (options) => {
 };
 
 /**
+ * Return the statistics of the poll by share token.
+ *
  * @param {Object} options
  * @param {String} options.token The share token of poll
  * @throws {Error}
@@ -51,6 +55,17 @@ module.exports.findPollack = async (options) => {
   //   status: 500, // Or another error code.
   //   error: 'Server Error' // Or another error message.
   // });
+  const { token } = options;
+
+  try {
+    const db = await getDatabase();
+    // const res = await db.query('SELECT $1::text as message', ['Hello world!'])
+    const res = await db.query('SELECT * FROM "poll" WHERE token = $1::UUID', [token])
+    console.log(res.rows[0]) // Hello world!
+    await db.end()
+  } catch (e) {
+    console.error(e);  // TODO: better error handling, yo.
+  }
 
   return {
     status: 200,
