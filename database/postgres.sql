@@ -16,8 +16,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/23
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/23/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/31
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/31/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY
@@ -25,9 +25,9 @@ CREATE TABLE "user" (
 
 CREATE TABLE "poll" (
   "id" SERIAL PRIMARY KEY,
-  "token" UUID,
-  "owner" INTEGER NOT NULL,
   "title" TEXT NOT NULL,
+  "token" UUID UNIQUE,
+  "owner" INTEGER,
   "description" TEXT,
   "voices" BIGINT,
   "worst" BOOLEAN,
@@ -37,7 +37,7 @@ CREATE TABLE "poll" (
 
 CREATE INDEX "idx_poll__owner" ON "poll" ("owner");
 
-ALTER TABLE "poll" ADD CONSTRAINT "fk_poll__owner" FOREIGN KEY ("owner") REFERENCES "user" ("id") ON DELETE CASCADE;
+ALTER TABLE "poll" ADD CONSTRAINT "fk_poll__owner" FOREIGN KEY ("owner") REFERENCES "user" ("id") ON DELETE SET NULL;
 
 CREATE TABLE "option" (
   "id" SERIAL PRIMARY KEY,
@@ -64,4 +64,18 @@ CREATE INDEX "idx_poll_user" ON "poll_user" ("user");
 
 ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id");
 
-ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__user" FOREIGN KEY ("user") REFERENCES "user" ("id")
+ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__user" FOREIGN KEY ("user") REFERENCES "user" ("id");
+
+CREATE TABLE "vote" (
+  "id" SERIAL PRIMARY KEY,
+  "option" INTEGER NOT NULL,
+  "user" INTEGER NOT NULL
+);
+
+CREATE INDEX "idx_vote__option" ON "vote" ("option");
+
+CREATE INDEX "idx_vote__user" ON "vote" ("user");
+
+ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__option" FOREIGN KEY ("option") REFERENCES "option" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__user" FOREIGN KEY ("user") REFERENCES "user" ("id") ON DELETE CASCADE
