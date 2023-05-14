@@ -69,10 +69,34 @@ export async function addVotePollack(options) {
 
     await db.end()
   } catch (e) {
+    if (e instanceof DatabaseError && e.message === 'insert or update on table "vote" violates foreign key constraint "fk_vote__option_poll__option_option"') {
+      throw new ServerError({
+        status: 404, // Or another error code.
+        error: 'Not found: Vote option not found.' // Or another error message.
+      });
+    }
+    if (e instanceof DatabaseError && e.message === 'null value in column "user" of relation "vote" violates not-null constraint') {
+      throw new ServerError({
+        status: 404, // Or another error code.
+        error: 'Not found: User not found.' // Or another error message.
+      });
+    }
+    if (e instanceof DatabaseError && e.where === 'unnamed portal parameter $2 = \'...\'' && e.message.startsWith('invalid input syntax for type uuid: "')) {
+      throw new ServerError({
+        status: 404, // Or another error code.
+        error: 'Not found: Poll invalid.' // Or another error message.
+      });
+    }
+    if (e instanceof DatabaseError && e.message === 'null value in column "option_poll" of relation "vote" violates not-null constraint') {
+      throw new ServerError({
+        status: 404, // Or another error code.
+        error: 'Not found: Poll not found.' // Or another error message.
+      });
+    }
     if (e instanceof DatabaseError && e.message === 'duplicate key value violates unique constraint "idx_vote_uniqueness"') {
       throw new ServerError({
         status: 409, // Or another error code.
-        error: 'Conflict: Vote already exists' // Or another error message.
+        error: 'Conflict: Vote already exists.' // Or another error message.
       });
     }
     console.error(e);  // TODO: better error handling, yo.
