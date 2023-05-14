@@ -119,13 +119,15 @@ INSERT INTO "poll" (
 
 INSERT INTO "option" (
   "poll", "option", "text"
-) VALUES (
-  (1, 1, 'Example A'), (1, 2, 'Example B'), (1, 3, 'Example C')
-) RETURNING "text", "poll", "fixed_in_poll";
+) VALUES
+  (1, 1, 'Example A'),
+  (1, 2, 'Example B'),
+  (1, 3, 'Example C')
+RETURNING "text", "poll", "fixed_in_poll";
 
 INSERT INTO "user" (
   "id", "name"
-) VALUES (
-  (0, 'system'),
-  (1, 'first!1')
-) RETURNING "id";
+) VALUES
+  (1, 'system'),
+  (2, 'first!1')
+RETURNING "id";
