@@ -14,9 +14,10 @@ GRANT ALL PRIVILEGES ON DATABASE pollshed TO pollshed;
 
 
 
-
-
+-- drop older versions of stuff
 DROP INDEX IF EXISTS "idx_vote__option";
+-- drop for re-creation
+DROP INDEX IF EXISTS "idx_vote__option_poll_option_option";
 DROP INDEX IF EXISTS "idx_vote__user";
 DROP TABLE IF EXISTS "vote";
 DROP INDEX IF EXISTS "idx_poll_user";
@@ -29,8 +30,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/36
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/36/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/43
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/43/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
@@ -41,7 +42,7 @@ CREATE TABLE "poll" (
   "id" SERIAL PRIMARY KEY,
   "title" TEXT NOT NULL,
   "token" UUID UNIQUE,
-  "owner" INTEGER,
+  "owner" BIGINT,
   "description" TEXT,
   "voices" BIGINT,
   "worst" BOOLEAN,
@@ -54,23 +55,22 @@ CREATE INDEX "idx_poll__owner" ON "poll" ("owner");
 ALTER TABLE "poll" ADD CONSTRAINT "fk_poll__owner" FOREIGN KEY ("owner") REFERENCES "user" ("id") ON DELETE SET NULL;
 
 CREATE TABLE "option" (
-  "id" SERIAL PRIMARY KEY,
+  "poll" BIGINT NOT NULL,
+  "option" BIGINT NOT NULL,
   "text" TEXT NOT NULL,
-  "poll" INTEGER NOT NULL,
-  "fixed_in_poll" INTEGER
+  "fixed_in_poll" BIGINT,
+  PRIMARY KEY ("poll", "option")
 );
 
 CREATE INDEX "idx_option__fixed_in_poll" ON "option" ("fixed_in_poll");
-
-CREATE INDEX "idx_option__poll" ON "option" ("poll");
 
 ALTER TABLE "option" ADD CONSTRAINT "fk_option__fixed_in_poll" FOREIGN KEY ("fixed_in_poll") REFERENCES "poll" ("id") ON DELETE SET NULL;
 
 ALTER TABLE "option" ADD CONSTRAINT "fk_option__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id") ON DELETE CASCADE;
 
 CREATE TABLE "poll_user" (
-  "poll" INTEGER NOT NULL,
-  "user" INTEGER NOT NULL,
+  "poll" BIGINT NOT NULL,
+  "user" BIGINT NOT NULL,
   PRIMARY KEY ("poll", "user")
 );
 
@@ -81,17 +81,18 @@ ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__poll" FOREIGN KEY ("poll")
 ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__user" FOREIGN KEY ("user") REFERENCES "user" ("id");
 
 CREATE TABLE "vote" (
-  "id" SERIAL PRIMARY KEY,
+  "id" UUID PRIMARY KEY,
   "worst" BOOLEAN NOT NULL DEFAULT false,
-  "option" INTEGER NOT NULL,
-  "user" INTEGER NOT NULL
+  "option_poll" BIGINT NOT NULL,
+  "option_option" BIGINT NOT NULL,
+  "user" BIGINT NOT NULL
 );
 
-CREATE INDEX "idx_vote__option" ON "vote" ("option");
+CREATE INDEX "idx_vote__option_poll_option_option" ON "vote" ("option_poll", "option_option");
 
 CREATE INDEX "idx_vote__user" ON "vote" ("user");
 
-ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__option" FOREIGN KEY ("option") REFERENCES "option" ("id") ON DELETE CASCADE;
+ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__option_poll__option_option" FOREIGN KEY ("option_poll", "option_option") REFERENCES "option" ("poll", "option") ON DELETE CASCADE;
 
 ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__user" FOREIGN KEY ("user") REFERENCES "user" ("id") ON DELETE CASCADE
 
