@@ -6,6 +6,7 @@ import { uuidv7 } from "uuidv7";
  * Add a new vote to the poll
  *
  * @param {Object} options
+ * @param {Object} options.body The body of the request
  * @param {String} options.token Share token to vote in the poll.
  * @throws {Error}
  * @return {Promise}
@@ -31,11 +32,10 @@ export async function addVotePollack(options) {
 
   // TODO: implement `owner.lock` - bool - The user is a Pollock user.
 
-  const json = {"owner": {"name": "first!1", "lock": false}, "choice": [{"id": 1, "worst": false}]}
   try {
     const db = await getDatabase();
     // const res = await db.query('SELECT $1::text as message', ['Hello world!'])
-    for (const choice of json.choice) {
+    for (const choice of options.body.choice) {
       // INSERT INTO "public"."vote"("worst", "option_poll", "option_option", "user") VALUES(FALSE, 1, 1, 2) RETURNING "id", "worst", "option_poll", "option_option", "user";
       // 'INSERT INTO "vote" ("option_poll", "option_option", "user") VALUES((SELECT "id" FROM "poll" WHERE "token" = $1), (SELECT "id" FROM "user" WHERE "name" = $2) RETURNING "id";
       const query = [`
@@ -59,7 +59,7 @@ export async function addVotePollack(options) {
           // "option_option"
           choice.id,
           // "user"
-          json.owner.name,
+          options.body.owner.name,
         ]
       ]
       console.log(choice, ...query)
