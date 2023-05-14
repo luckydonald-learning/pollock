@@ -1,6 +1,9 @@
 import ServerError from "../../lib/error.js";
+import getDatabase from "../../lib/database.js";
 
 /**
+ * Add a new vote to the poll
+ *
  * @param {Object} options
  * @param {String} options.token Share token to vote in the poll.
  * @throws {Error}
@@ -23,6 +26,50 @@ export async function addVotePollack(options) {
   //   status: 500, // Or another error code.
   //   error: 'Server Error' // Or another error message.
   // });
+
+
+  // TODO: implement `owner.lock` - bool - The user is a Pollock user.
+
+  const json = {"owner": {"name": "first!1", "lock": false}, "choice": [{"id": 1, "worst": false}]}
+  try {
+    const db = await getDatabase();
+    // const res = await db.query('SELECT $1::text as message', ['Hello world!'])
+    for (const choice of json.choice) {
+      // INSERT INTO "public"."vote"("worst", "option_poll", "option_option", "user") VALUES(FALSE, 1, 1, 2) RETURNING "id", "worst", "option_poll", "option_option", "user";
+      // 'INSERT INTO "vote" ("option_poll", "option_option", "user") VALUES((SELECT "id" FROM "poll" WHERE "token" = $1), (SELECT "id" FROM "user" WHERE "name" = $2) RETURNING "id";
+      const query = [`
+        INSERT INTO "vote" (
+          "id", "option_poll", "option_option", "user"
+        ) VALUES (
+          -- "id":
+          $1,
+          -- "option_poll":
+          (SELECT "id" FROM "poll" WHERE "token" = $2::UUID),
+          -- "option_option":
+          $3,
+          -- "user":
+          (SELECT "id" FROM "user" WHERE "name" = $4),
+        )`,
+        [
+          // "id"
+          'b2d899ae-d6ef-48ee-aece-097b524fa156',
+          // "option_poll"
+          options.token,
+          // "option_option"
+          choice.id,
+          // "user"
+          json.owner.name,
+        ]
+      ]
+      console.log(choice, ...query)
+      const res = await db.query(...query);
+      console.log(res.rows[0]) // Hello world!
+    }
+
+    await db.end()
+  } catch (e) {
+    console.error(e);  // TODO: better error handling, yo.
+  }
 
   return {
     status: 200,
