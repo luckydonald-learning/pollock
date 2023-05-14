@@ -3,8 +3,18 @@ DROP USER  IF EXISTS pollshed;
 
 CREATE USER pollshed WITH CREATEDB ENCRYPTED PASSWORD 'Stay Out Of My Shed';
 CREATE DATABASE pollshed WITH OWNER = pollshed;
+GRANT ALL PRIVILEGES ON DATABASE pollshed TO pollshed;
+-- GRANT ALL PRIVILEGES ON TABLE "poll_user" TO pollshed;
+-- GRANT ALL PRIVILEGES ON TABLE "option" TO pollshed;
+-- GRANT ALL PRIVILEGES ON TABLE "poll" TO pollshed;
+-- GRANT ALL PRIVILEGES ON TABLE "user" TO pollshed;
 
 \connect pollshed;
+
+
+
+
+
 
 DROP INDEX IF EXISTS "idx_poll_user";
 DROP TABLE IF EXISTS "poll_user";
@@ -79,3 +89,15 @@ CREATE INDEX "idx_vote__user" ON "vote" ("user");
 ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__option" FOREIGN KEY ("option") REFERENCES "option" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__user" FOREIGN KEY ("user") REFERENCES "user" ("id") ON DELETE CASCADE
+
+;-- Now our own data
+
+
+
+
+
+
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA "public" TO pollshed;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA "public" TO pollshed;
+
