@@ -1,7 +1,6 @@
 
 function print (path, layer) {
   // source: https://github.com/expressjs/express/issues/3308#issuecomment-300957572
-  console.log('Registered routes are:')
   if (layer.route) {
     layer.route.stack.forEach(print.bind(null, path.concat(split(layer.route.path))))
   } else if (layer.name === 'router' && layer.handle.stack) {

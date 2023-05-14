@@ -32,6 +32,7 @@ app.use((err, req, res, next) => {
   res.status(status).send({ status, error: msg });
 });
 
+console.log('Registered routes are:')
 app._router.stack.forEach(printRoutes.bind(null, []))
 
 module.exports = app;
