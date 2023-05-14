@@ -1,12 +1,13 @@
-const ServerError = require('../../lib/error');
-const getDatabase = require('../../lib/database');
+import ServerError from "../../lib/error.js";
+import getDatabase from "../../lib/database.js";
 
 /**
+ * Add a new poll.
  * @param {Object} options
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.addPollack = async (options) => {
+export async function addPollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -28,7 +29,7 @@ module.exports.addPollack = async (options) => {
     status: 200,
     data: 'addPollack ok!'
   };
-};
+}
 
 /**
  * Return the statistics of the poll by share token.
@@ -38,7 +39,7 @@ module.exports.addPollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.findPollack = async (options) => {
+export async function findPollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -71,7 +72,7 @@ module.exports.findPollack = async (options) => {
     status: 200,
     data: 'findPollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -79,7 +80,7 @@ module.exports.findPollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.updatePollack = async (options) => {
+export async function updatePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -101,7 +102,7 @@ module.exports.updatePollack = async (options) => {
     status: 200,
     data: 'updatePollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -109,7 +110,7 @@ module.exports.updatePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.deletePollack = async (options) => {
+export async function deletePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -131,5 +132,7 @@ module.exports.deletePollack = async (options) => {
     status: 200,
     data: 'deletePollack ok!'
   };
-};
+}
+
+export default {addPollack, findPollack, updatePollack, deletePollack}
 

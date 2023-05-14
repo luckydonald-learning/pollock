@@ -1,5 +1,7 @@
 "use strict";
-const { Client } = require('pg')
+import pkg from 'pg';
+const { Client } = pkg;
+
 
 async function getDatabase() {
   const client = new Client({
@@ -13,4 +15,4 @@ async function getDatabase() {
   return client;
 }
 
-module.exports = getDatabase;  // same as `export default getDatabase`.
+export default getDatabase;  // same as `export default getDatabase`.

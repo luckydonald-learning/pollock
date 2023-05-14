@@ -1,11 +1,12 @@
-const ServerError = require('../../lib/error');
+import ServerError from "../../lib/error.js";
+
 /**
  * @param {Object} options
  * @param {String} options.token Share token to vote in the poll.
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.addVotePollack = async (options) => {
+export async function addVotePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -27,7 +28,7 @@ module.exports.addVotePollack = async (options) => {
     status: 200,
     data: 'addVotePollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -35,7 +36,7 @@ module.exports.addVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.findVotePollack = async (options) => {
+export async function findVotePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -57,7 +58,7 @@ module.exports.findVotePollack = async (options) => {
     status: 200,
     data: 'findVotePollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -65,7 +66,7 @@ module.exports.findVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.updateVotePollack = async (options) => {
+export async function updateVotePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -87,7 +88,7 @@ module.exports.updateVotePollack = async (options) => {
     status: 200,
     data: 'updateVotePollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -95,7 +96,7 @@ module.exports.updateVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.deleteVotePollack = async (options) => {
+export async function deleteVotePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -117,5 +118,7 @@ module.exports.deleteVotePollack = async (options) => {
     status: 200,
     data: 'deleteVotePollack ok!'
   };
-};
+}
+
+export default {addVotePollack, findVotePollack, updateVotePollack, deleteVotePollack}
 

@@ -29,4 +29,4 @@ function split (thing) {
   }
 }
 
-module.exports = { print };
+export default print;

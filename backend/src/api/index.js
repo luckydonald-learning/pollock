@@ -1,9 +1,13 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const config = require('../lib/config');
-const logger = require('../lib/logger');
-const printRoutes = require('../lib/routes').print;
+import express from "express";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+
+import logger from "../lib/logger.js";
+import config from "../lib/config.js";
+import printRoutes from "../lib/routes.js";
+
+import pollRoutes from "./routes/poll.js";
+import voteRoutes from "./routes/vote.js";
 
 const log = logger(config.logger);
 const app = express();
@@ -15,8 +19,8 @@ app.use(cookieParser());
 /*
  * Routes
  */
-app.use('/poll', require('./routes/poll'));
-app.use('/vote', require('./routes/vote'));
+app.use('/poll', pollRoutes);
+app.use('/vote', voteRoutes);
 
 // catch 404
 app.use((req, res, next) => {
@@ -35,4 +39,4 @@ app.use((err, req, res, next) => {
 console.log('Registered routes are:')
 app._router.stack.forEach(printRoutes.bind(null, []))
 
-module.exports = app;
+export default app;
