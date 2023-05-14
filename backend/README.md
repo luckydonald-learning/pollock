@@ -17,7 +17,7 @@ yarn install --dev
 yarn run dev
 ```
 
-# Generate Client code
+# Generate Client code (not needed)
 ```bash
 #  yarn add swagger-node-codegen
 cd backend
