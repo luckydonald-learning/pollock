@@ -16,11 +16,14 @@ GRANT ALL PRIVILEGES ON DATABASE pollshed TO pollshed;
 
 -- drop older versions of stuff
 DROP INDEX IF EXISTS "idx_vote__option";
+DROP TABLE IF EXISTS "useraccesstopoll";
+DROP INDEX IF EXISTS "idx_poll_user";
 -- drop for re-creation
+DROP INDEX IF EXISTS "idx_user_access_to_poll__user";
+DROP TABLE IF EXISTS "user_access_to_poll";
 DROP INDEX IF EXISTS "idx_vote__option_poll_option_option";
 DROP INDEX IF EXISTS "idx_vote__user";
 DROP TABLE IF EXISTS "vote";
-DROP INDEX IF EXISTS "idx_poll_user";
 DROP TABLE IF EXISTS "poll_user";
 DROP INDEX IF EXISTS "idx_option__poll";
 DROP INDEX IF EXISTS "idx_option__fixed_in_poll";
@@ -30,8 +33,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/43
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/43/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/53
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/53/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
@@ -68,17 +71,17 @@ ALTER TABLE "option" ADD CONSTRAINT "fk_option__fixed_in_poll" FOREIGN KEY ("fix
 
 ALTER TABLE "option" ADD CONSTRAINT "fk_option__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id") ON DELETE CASCADE;
 
-CREATE TABLE "poll_user" (
+CREATE TABLE "user_access_to_poll" (
   "poll" BIGINT NOT NULL,
   "user" BIGINT NOT NULL,
   PRIMARY KEY ("poll", "user")
 );
 
-CREATE INDEX "idx_poll_user" ON "poll_user" ("user");
+CREATE INDEX "idx_user_access_to_poll__user" ON "user_access_to_poll" ("user");
 
-ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id");
+ALTER TABLE "user_access_to_poll" ADD CONSTRAINT "fk_user_access_to_poll__poll" FOREIGN KEY ("poll") REFERENCES "poll" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__user" FOREIGN KEY ("user") REFERENCES "user" ("id");
+ALTER TABLE "user_access_to_poll" ADD CONSTRAINT "fk_user_access_to_poll__user" FOREIGN KEY ("user") REFERENCES "user" ("id") ON DELETE CASCADE;
 
 CREATE TABLE "vote" (
   "id" UUID PRIMARY KEY,
@@ -115,14 +118,14 @@ INSERT INTO "poll" (
 ) RETURNING "id", "token", "owner", "title", "description", "voices", "worst", "deadline", "visible_to_all";
 
 INSERT INTO "option" (
-  "id", "text", "poll"
+  "poll", "option", "text"
 ) VALUES (
-  (1, 'Example A', 0), (2, 'Example B', 0), (3, 'Example C', 0)
-) RETURNING "id", "text", "poll", "fixed_in_poll";
+  (1, 1, 'Example A'), (1, 2, 'Example B'), (1, 3, 'Example C')
+) RETURNING "text", "poll", "fixed_in_poll";
 
 INSERT INTO "user" (
   "id", "name"
 ) VALUES (
-  (0, "system"),
-  (1, "first!1")
+  (0, 'system'),
+  (1, 'first!1')
 ) RETURNING "id";
