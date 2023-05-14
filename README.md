@@ -9,4 +9,5 @@ Some strange voting app. Because everyone builds a voting app first.
 
 2. Go through the *Install* section of [backend](backend)/[README.md](backend/README.md#install).
 3. Go through the *Install* section of [frontend](frontend)/[README.md](frontend/README.md#install).
+4. Go through the *Install* section of [database](database)/[README.md](database/README.md#install).
 
