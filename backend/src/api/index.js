@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('../lib/config');
 const logger = require('../lib/logger');
+const printRoutes = require('../lib/routes').print;
 
 const log = logger(config.logger);
 const app = express();
@@ -31,5 +32,6 @@ app.use((err, req, res, next) => {
   res.status(status).send({ status, error: msg });
 });
 
+app._router.stack.forEach(printRoutes.bind(null, []))
 
 module.exports = app;
