@@ -1,5 +1,6 @@
 import ServerError from "../../lib/error.js";
 import getDatabase from "../../lib/database.js";
+import { uuidv7 } from "uuidv7";
 
 /**
  * Add a new vote to the poll
@@ -52,7 +53,7 @@ export async function addVotePollack(options) {
         )`,
         [
           // "id"
-          'b2d899ae-d6ef-48ee-aece-097b524fa156',
+          uuidv7(),
           // "option_poll"
           options.token,
           // "option_option"
