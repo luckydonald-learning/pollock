@@ -16,6 +16,8 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/20
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/20/postgres
 
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY
