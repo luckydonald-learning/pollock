@@ -1,6 +1,6 @@
 "use strict";
 import pkg from 'pg';
-const { Client } = pkg;
+const { Client, DatabaseError } = pkg;
 
 
 async function getDatabase() {
@@ -15,4 +15,6 @@ async function getDatabase() {
   return client;
 }
 
-export default getDatabase;  // same as `export default getDatabase`.
+console.log('DatabaseError', DatabaseError)
+
+export { DatabaseError, getDatabase, getDatabase as default };

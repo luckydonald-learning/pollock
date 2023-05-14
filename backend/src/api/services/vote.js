@@ -1,5 +1,5 @@
 import ServerError from "../../lib/error.js";
-import getDatabase from "../../lib/database.js";
+import { getDatabase, DatabaseError } from "../../lib/database.js";
 import { uuidv7 } from "uuidv7";
 
 /**
@@ -69,7 +69,12 @@ export async function addVotePollack(options) {
 
     await db.end()
   } catch (e) {
-    // TODO: catch `duplicate key value violates unique constraint "idx_vote_uniqueness"`.
+    if (e instanceof DatabaseError && e.message === 'duplicate key value violates unique constraint "idx_vote_uniqueness"') {
+      throw new ServerError({
+        status: 409, // Or another error code.
+        error: 'Conflict: Vote already exists' // Or another error message.
+      });
+    }
     console.error(e);  // TODO: better error handling, yo.
   }
 
