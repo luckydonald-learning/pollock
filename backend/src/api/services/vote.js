@@ -69,6 +69,7 @@ export async function addVotePollack(options) {
 
     await db.end()
   } catch (e) {
+    // TODO: catch `duplicate key value violates unique constraint "idx_vote_uniqueness"`.
     console.error(e);  // TODO: better error handling, yo.
   }
 

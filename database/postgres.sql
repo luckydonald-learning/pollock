@@ -19,6 +19,7 @@ DROP INDEX IF EXISTS "idx_vote__option";
 DROP TABLE IF EXISTS "useraccesstopoll";
 DROP INDEX IF EXISTS "idx_poll_user";
 -- drop for re-creation
+DROP INDEX IF EXISTS "idx_vote_uniqueness";
 DROP INDEX IF EXISTS "idx_user_access_to_poll__user";
 DROP TABLE IF EXISTS "user_access_to_poll";
 DROP INDEX IF EXISTS "idx_vote__option_poll_option_option";
@@ -105,6 +106,8 @@ ALTER TABLE "vote" ADD CONSTRAINT "fk_vote__user" FOREIGN KEY ("user") REFERENCE
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA "public" TO pollshed;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA "public" TO pollshed;
+
+CREATE UNIQUE INDEX CONCURRENTLY "idx_vote_uniqueness" ON "vote" ("option_poll", "option_option", "user");
 
 
 INSERT INTO "poll" (
