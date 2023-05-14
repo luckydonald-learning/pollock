@@ -16,6 +16,9 @@ GRANT ALL PRIVILEGES ON DATABASE pollshed TO pollshed;
 
 
 
+DROP INDEX IF EXISTS "idx_vote__option";
+DROP INDEX IF EXISTS "idx_vote__user";
+DROP TABLE IF EXISTS "vote";
 DROP INDEX IF EXISTS "idx_poll_user";
 DROP TABLE IF EXISTS "poll_user";
 DROP INDEX IF EXISTS "idx_option__poll";
@@ -26,11 +29,12 @@ DROP TABLE IF EXISTS "poll";
 DROP TABLE IF EXISTS "user";
 
 
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/31
--- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/31/postgres
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/36
+-- https://editor.ponyorm.com/user/luckydonald/Pollock/snapshots/36/postgres
 
 CREATE TABLE "user" (
-  "id" SERIAL PRIMARY KEY
+  "id" SERIAL PRIMARY KEY,
+  "name" TEXT NOT NULL
 );
 
 CREATE TABLE "poll" (
@@ -78,6 +82,7 @@ ALTER TABLE "poll_user" ADD CONSTRAINT "fk_poll_user__user" FOREIGN KEY ("user")
 
 CREATE TABLE "vote" (
   "id" SERIAL PRIMARY KEY,
+  "worst" BOOLEAN NOT NULL DEFAULT false,
   "option" INTEGER NOT NULL,
   "user" INTEGER NOT NULL
 );
@@ -115,7 +120,8 @@ INSERT INTO "option" (
 ) RETURNING "id", "text", "poll", "fixed_in_poll";
 
 INSERT INTO "user" (
-  "id"
+  "id", "name"
 ) VALUES (
-  (1)
+  (0, "system"),
+  (1, "first!1")
 ) RETURNING "id";
