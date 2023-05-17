@@ -2,15 +2,30 @@
 
 Please install Postgres.
 
-#### Mac
-1. Download http://postgres.app 
-2. Copy downloaded file to application folder
-3. Click "Initialize" to create a new server
-4. Doubleclick any of the databases, e.g. "postgres".
-5. Paste the content of the `postgres.sql` into the terminal which just opened.
+## Mac
+1. Download the app from [Postgres.app](http://postgres.app) and copy `Postgres.app` to the Application folder
+2. Click "Initialize" to create a new server.
+3. In a terminal execute
+    ```shell
+    alias psql="/Applications/Postgres.app/Contents/Versions/14/bin/psql"
+    ```
+4. Run [**Load sql**](#load-sql) as seen below.
+   
 
+## Linux
+1. ????
+2. ????
+3. ????
+4. Profit
 
-#### Other
+## Other
 1. Install `postgres`
-2. Connect to database 
-3. Paste the content of the `postgres.sql`, and run it against the database.
+2. Start `postgres`
+3. Run [**Load sql**](#load-sql) as seen below. 
+
+
+# Load sql
+
+```shell
+psql --port=5432 --username="postgres" --file="database/postgres.sql"
+```

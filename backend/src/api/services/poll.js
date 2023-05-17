@@ -1,12 +1,13 @@
-
 const pool = require('../../../../database/db'); // Anbindung der Datenbank
 const ServerError = require('../../lib/error');
+
 /**
+ * Add a new poll.
  * @param {Object} options
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.addPollack = async (options) => {
+export async function addPollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -28,16 +29,17 @@ module.exports.addPollack = async (options) => {
     status: 200,
     data: 'addPollack ok!'
   };
-};
+}
 
 /**
+ * Return the statistics of the poll by share token.
+ *
  * @param {Object} options
  * @param {String} options.token The share token of poll
  * @throws {Error}
  * @return {Promise}
  */
 
- 
 module.exports.findPollack = async (options) => {
 
   try {
@@ -63,13 +65,14 @@ module.exports.findPollack = async (options) => {
   }
 };
 
+
 /**
  * @param {Object} options
  * @param {String} options.token Admin token to perform the update with
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.updatePollack = async (options) => {
+export async function updatePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -91,7 +94,7 @@ module.exports.updatePollack = async (options) => {
     status: 200,
     data: 'updatePollack ok!'
   };
-};
+}
 
 /**
  * @param {Object} options
@@ -99,7 +102,7 @@ module.exports.updatePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.deletePollack = async (options) => {
+export async function deletePollack(options) {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -121,5 +124,7 @@ module.exports.deletePollack = async (options) => {
     status: 200,
     data: 'deletePollack ok!'
   };
-};
+}
+
+export default {addPollack, findPollack, updatePollack, deletePollack}
 

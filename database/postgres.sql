@@ -103,7 +103,19 @@ ALTER TABLE "polloption" ADD CONSTRAINT "fk_polloption__poll" FOREIGN KEY ("poll
 
 ALTER TABLE "polloption" ADD CONSTRAINT "fk_polloption__vote" FOREIGN KEY ("vote") REFERENCES "vote" ("id") ON DELETE CASCADE;
 
+
+
+
+
+
+
+
+
+
 -- INSERT TEST DATA
+
+
+
 INSERT INTO "poll" ("title", "description", "voices", "worst", "deadline") VALUES ('Favorite Color', 'What is your favorite color?', 0, false, '2023-06-30 23:59:59');
 INSERT INTO "poll" ("title", "description", "voices", "worst", "deadline") VALUES ('Best Movie', 'What is the best movie you have ever seen?', 0, false, '2023-07-15 23:59:59');
 

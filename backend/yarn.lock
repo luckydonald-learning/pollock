@@ -787,6 +787,11 @@ utils-merge@1.0.0:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.0.tgz#0294fb922bb9375153541c4f7096231f287c8af8"
   integrity sha512-HwU9SLQEtyo+0uoKXd1nkLqigUWLB+QuNQR4OcmB73eWqksM5ovuqcycks2x043W8XVb75rG1HQ0h93TMXkzQQ==
 
+uuidv7@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/uuidv7/-/uuidv7-0.4.3.tgz#5eb5b72ab2f034b0d25cc27a248cc2b36db52acc"
+  integrity sha512-wXjciBFBg1fpNEXSkGkJhBpvXTLOkH21M2aKHgr8qfSkkAxjzquqMI/qyqDo+rLlx40BGMksDfKmhLSHvc37Bg==
+
 vary@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.0.1.tgz#99e4981566a286118dfb2b817357df7993376d10"
