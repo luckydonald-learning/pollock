@@ -1,13 +1,17 @@
 <script>
 
 import HomePage from './components/HomePage.vue'
-import MyPolls from './components/MyPolls.vue'
+import MyTokens from './components/MyTokens.vue'
 import CreatePolls from './components/CreatePolls.vue'
+import VoteTokenInput from './components/VoteTokenInput.vue'
+import PollTokenInput from './components/PollTokenInput.vue'
 
 const routes = {
   '/': HomePage,
-  '/MyPolls': MyPolls,
+  '/MyTokens': MyTokens,
   '/CreatePolls': CreatePolls,
+  '/VoteTokenInput': VoteTokenInput,
+  '/PollTokenInput': PollTokenInput,
 }
 
 export default {
@@ -45,11 +49,13 @@ axios.get('/api/mydata')
   <div class="navbar">
     <div class="navbar-container">
       <div class="navbar-links">
-        <a href="#/">
+        <a :href="'#/'" :class="{ 'active': currentPath === '#/' }">
           <font-awesome-icon :icon="['fas', 'house']" />
         </a>
-        <a href="#/MyPolls">My Polls</a>
-        <a href="#/CreatePolls">Create Polls</a>
+        <a :href="'#/MyTokens'" :class="{ 'active': currentPath === '#/MyTokens' }">My Tokens</a>
+        <a :href="'#/CreatePolls'" :class="{ 'active': currentPath === '#/CreatePolls' }">Create Polls</a>
+        <a :href="'#/VoteTokenInput'" :class="{ 'active': currentPath === '#/VoteTokenInput' }">Search Vote</a>
+        <a :href="'#/PollTokenInput'" :class="{ 'active': currentPath === '#/PollTokenInput' }">Search Poll</a>
       </div>
     </div>
   </div>
@@ -58,7 +64,7 @@ axios.get('/api/mydata')
 
 <style>
 body {
-  background: linear-gradient(to left, #4B0082, #000000);
+  background: linear-gradient(to left, #ffffff, #e9e9e9);
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -66,7 +72,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin-top: 50px; /* Hier den gewünschten Abstand in Pixeln eintragen */
   text-align: center;
-  color: #fefefe;
+  color: #000000;
 }
 /* Bei Hover nach unten verschieben */
 .navbar a:hover {
@@ -87,8 +93,13 @@ body {
   z-index: 999;
 }
 
+.navbar-links a.active {
+  background: linear-gradient(to right, #3900c9, #110090);
+}
+
 .navbar-links a {
-  color: rgb(107, 107, 107); /* Ändere die Farbe des Links */
+  color: rgb(162, 162, 162); /* Ändere die Farbe des Links */
+  font-weight: bold;
   text-decoration: none; /* Entferne die Unterstreichung */
 }
 
@@ -97,6 +108,6 @@ body {
   display: inline-block;
   margin: 0 10px;
   padding: 10px;
-  border: 3px solid #0f0f0f;
+  border: 3px solid #000000;
 }
 </style>
