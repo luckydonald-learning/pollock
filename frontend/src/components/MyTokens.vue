@@ -1,6 +1,6 @@
 <template>
+    <h1>Coming Soon</h1>
     <div>
-        <h1>My Polls</h1>
         <ul>
             <li v-for="poll in polls" :key="poll.id">{{ poll.title }}</li>
         </ul>
