@@ -31,15 +31,16 @@ node_modules/.bin/snc  --output generated-frontend "${YAML_FILE_PATH}/${YAML_FIL
 
 
 # Test
-Show statistics to a poll:
+Show statistics to a poll (No longer works - must be adapted to the new database/.sql):
 ```shell
 curl --request POST --header "Content-Type: application/json" http://localhost:3000/poll/lack/e6f79f06-f280-11ed-b574-325096b39f47
 ```
 
-Vote on a poll:
+Vote on a poll (No longer works - must be adapted to the new database/.sql):
 ```shell
 curl --request POST --header "Content-Type: application/json" http://localhost:3000/vote/lack/e6f79f06-f280-11ed-b574-325096b39f47 --data '{"owner": {"name": "first!1", "lock": false}, "choice": [{"id": 1, "worst": false}]}'
 ```
+(no longer accurate - must be adapted to the new database/.sql)
 ```json
 {"owner": {"name": "first!1", "lock": false}, "choice": [{"id": 1, "worst": false}]}
 ```
