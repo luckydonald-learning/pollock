@@ -38,6 +38,8 @@ module.exports.addVotePollack = async (options) => {
  */
 module.exports.findVotePollack = async (options) => {
   try {
+    // Holt mit dem Edit-Token grundlegende Body Daten des zugehörigen Polls
+    // {"id", "name", "title", "description", "voices", "worst", "deadline","shared_token"}
     const pollack = await pool.query(`SELECT u.*, p.*, pt.share AS shared_token
     FROM "user" AS u
     JOIN "vote" AS v ON u.id = v.owner
@@ -45,12 +47,88 @@ module.exports.findVotePollack = async (options) => {
     JOIN "polltoken" AS pt ON p.id = pt.poll
     JOIN "edittoken" AS et ON v.id = et.vote
     WHERE et.token = $1`, [options.token]);
+
     if (!pollack) {
       throw new Error('Vote not found');
     }
+
+    const pollackRow = pollack.rows[0];
+    // Holt alle innerhalb eines Votes gewählte Optionen anhand des Edit-Tokens
+    // {"polloption","vote"}
+    const choice = await pool.query(`SELECT pv.*
+    FROM edittoken AS et
+    JOIN vote AS v ON et.vote = v.id
+    JOIN polloption_vote AS pv ON v.id = pv.vote
+    WHERE et.token = $1`, [options.token]);
+
+    const choiceArray = choice.rows.map(row => {
+      return {
+        id: row.polloption,
+        vote: row.vote,
+      };
+    });
+    console.log("FELIX TESTET: " + JSON.stringify(choiceArray));
+    // Holt alle Optionen des Polls anhand des Edit-Tokens
+    /* [
+        {"id","text","fixed"},
+        {"id","text","fixed"},
+        ...
+       ]
+    */
+    const allOptions = await pool.query(`SELECT po.id, po.text, po.fixed
+    FROM edittoken AS et
+    JOIN vote AS v ON et.vote = v.id
+    JOIN poll AS p ON v.poll = p.id
+    JOIN polloption AS po ON p.id = po.poll
+    WHERE et.token = $1;`, [options.token]);
+
+    // Fasse alle Optionen zu einem Array wie im Response gefordert zusammen
+    const optionsArray = allOptions.rows.map(row => ({
+      id: row.id,
+      text: row.text
+    }));
+
+    const voteTime = await pool.query(`SELECT v.time
+  FROM edittoken AS et
+  JOIN vote AS v ON et.vote = v.id
+  WHERE et.token = $1`, [options.token]);
+
+    // Array mit den IDs der PollOptions, bei denen fixed=true ist
+    const fixedOptions = allOptions.rows
+      .filter(option => option.fixed === true)
+      .map(option => option.id);
+
+
+    const response = {
+      "poll": {
+        "body": {
+          "title": pollackRow.title,
+          "description": pollackRow.description,
+          "options": optionsArray,
+          "setting": {
+            "voices": pollackRow.voices,
+            "worst": pollackRow.worst,
+            "deadline": pollackRow.deadline
+          },
+          "fixed": fixedOptions
+        },
+        "share": {
+          "link": "",
+          "value": pollack.rows[0].shared_token,
+        }
+      },
+      "vote": {
+        "owner": {
+          "name": pollack.rows[0].name
+        },
+        "choice": choiceArray,
+      },
+      "time": voteTime.rows[0].time
+    };
+
     return {
       status: 200,
-      data: pollack
+      data: response
     };
   } catch (error) {
     throw new ServerError({
@@ -58,11 +136,6 @@ module.exports.findVotePollack = async (options) => {
       error: error.message
     });
   }
-
-  return {
-    status: 200,
-    data: 'findVotePollack ok!'
-  };
 };
 
 /**
