@@ -112,13 +112,10 @@ ALTER TABLE "polloption_vote" ADD CONSTRAINT "fk_polloption_vote__polloption" FO
 ALTER TABLE "polloption_vote" ADD CONSTRAINT "fk_polloption_vote__vote" FOREIGN KEY ("vote") REFERENCES "vote" ("id");
 
 
-
 -- INSERT TEST DATA
-
-
-
 INSERT INTO "poll" ("title", "description", "voices", "worst", "deadline") VALUES ('Favorite Color', 'What is your favorite color?', 1, false, '2023-06-30 23:59:59');
 INSERT INTO "poll" ("title", "description", "voices", "worst", "deadline") VALUES ('Best Movie', 'What is the best movie you have ever seen?', 2, false, '2023-07-15 23:59:59');
+
 
 INSERT INTO "polltoken" ("admin", "share", "poll") VALUES ('4f8401ef-2f2f-4a6d-8c7b-4b392ef0739f', '2a1e0fc0-4be0-480d-b0bc-170729625ca6', 1);
 INSERT INTO "polltoken" ("admin", "share", "poll") VALUES ('a8ff771d-68fd-4f22-b70b-61c255430d79', 'bd0e06e4-9505-4175-b9ef-1939d285a84d', 2);
@@ -174,7 +171,5 @@ INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (1, 6);
 INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (2, 7);
 INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (4, 8);
 INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (8, 8);
-
-
 
 

@@ -1,9 +1,9 @@
-const bunyan = require('bunyan');
+import bunyan from "bunyan";
 
 /**
  * @param {Object} config Logger configuration
  */
-module.exports = config => {
+export default config => {
   const bunyanConfig = [];
   const levels = Object.keys(config.levels);
 
@@ -29,4 +29,4 @@ module.exports = config => {
   });
 
   return bunyan.createLogger({ name: config.name, streams: bunyanConfig });
-};
+}

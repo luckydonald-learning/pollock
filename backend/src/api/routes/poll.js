@@ -1,5 +1,5 @@
-const express = require('express');
-const poll = require('../services/poll');
+import express from "express";
+import poll from "../services/poll.js";
 
 const router = new express.Router();
 
@@ -72,4 +72,4 @@ router.delete('/lack/:token', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;
