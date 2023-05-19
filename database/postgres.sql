@@ -77,25 +77,6 @@ CREATE TABLE "vote" (
   "id" SERIAL PRIMARY KEY,
   "time" TIME NOT NULL,
   "worst" BOOLEAN NOT NULL DEFAULT false,
-  "token" UUID UNIQUE NOT NULL,
-  "vote" BIGINT NOT NULL
-);
-
-CREATE INDEX "idx_edittoken__vote" ON "edittoken" ("vote");
-
-ALTER TABLE "edittoken" ADD CONSTRAINT "fk_edittoken__vote" FOREIGN KEY ("vote") REFERENCES "vote" ("id");
-
-CREATE TABLE "polloption_vote" (
-  "polloption" BIGINT NOT NULL,
-  "vote" BIGINT NOT NULL,
-  PRIMARY KEY ("polloption", "vote")
-);
-
-CREATE INDEX "idx_polloption_vote" ON "polloption_vote" ("vote");
-
-ALTER TABLE "polloption_vote" ADD CONSTRAINT "fk_polloption_vote__polloption" FOREIGN KEY ("polloption") REFERENCES "polloption" ("id");
-
-ALTER TABLE "polloption_vote" ADD CONSTRAINT "fk_polloption_vote__vote" FOREIGN KEY ("vote") REFERENCES "vote" ("id");
   "owner" BIGINT NOT NULL,
   "poll" BIGINT NOT NULL
 );
@@ -164,7 +145,7 @@ INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('05:25:00', true, 
 INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('08:22:00', false, 5, 2);
 INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('09:11:00', true, 1, 1);
 INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('11:00:00', false, 2, 1);
-INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('00:12:00', true, 3, 1);
+INSERT INTO "vote" ("time", "worst", "owner", "poll") VALUES ('00:12:00', true, 3, 2);
 
 INSERT INTO "edittoken" ("token", "vote") VALUES ('4b8401ef-2f2f-4a6d-8c7b-4b392ef0739f', 1);
 INSERT INTO "edittoken" ("token", "vote") VALUES ('5c8401ef-2f2f-4a6d-8c7b-4b392ef0739f', 2);
@@ -184,15 +165,15 @@ INSERT INTO "polloption" ("text", "poll") VALUES ('The Dark Knight', 2);
 INSERT INTO "polloption" ("text", "poll") VALUES ('Forrest Gump', 2);
 INSERT INTO "polloption" ("text", "poll") VALUES ('Inception', 2);
 
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (1, 1);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (2, 2);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (3, 3);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (5, 1);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (3, 2);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (4, 3);
 INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (4, 4);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (5, 5);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (6, 6);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (7, 7);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (3, 5);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (1, 6);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (2, 7);
+INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (4, 8);
 INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (8, 8);
-INSERT INTO "polloption_vote" ("polloption", "vote") VALUES (6, 8);
 
 
 
