@@ -1,5 +1,5 @@
-const pool = require('../../../../database/db'); // Anbindung der Datenbank
-const ServerError = require('../../lib/error');
+import pool from '../../../../database/db.js'; // Anbindung der Datenbank 
+import ServerError from '../../lib/error.js';
 
 /**
  * Add a new poll.
@@ -7,7 +7,7 @@ const ServerError = require('../../lib/error');
  * @throws {Error}
  * @return {Promise}
  */
-export async function addPollack(options) {
+export const addPollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -40,22 +40,106 @@ export async function addPollack(options) {
  * @return {Promise}
  */
 
-module.exports.findPollack = async (options) => {
+export const findPollack = async (options) => {
 
   try {
-    const pollack = await pool.query(`SELECT p.*, po.*, pt.share AS shared_token
+    const pollack = await pool.query(`SELECT p.*
     FROM poll AS p
     JOIN polltoken AS pt ON p.id = pt.poll
-    LEFT JOIN vote AS v ON v.poll = p.id
-    LEFT JOIN polloption AS po ON po.poll = p.id
-    WHERE pt.admin = $1 OR pt.share = $1
-    GROUP BY p.id, pt.share, po.id;`, [options.token]);
+    WHERE pt.share = $1;
+    `, [options.token]);
+
     if (!pollack) {
       throw new Error('Pollack not found');
     }
+
+    const pollRow = pollack.rows[0];
+
+    const allOptions = await pool.query(`SELECT po.id, po.text, po.fixed
+    FROM polltoken AS pt
+    JOIN poll AS p ON pt.poll = p.id
+    JOIN polloption AS po ON p.id = po.poll
+    WHERE pt.share = $1;`, [options.token]);
+
+    // Fasse alle Optionen zu einem Array wie im Response gefordert zusammen
+    const optionsArray = allOptions.rows.map(row => ({
+      id: row.id,
+      text: row.text
+    }));
+
+    const participants = await pool.query(`SELECT u.*
+    FROM "user" AS u
+    JOIN poll_user AS pu ON u.id = pu.user
+    WHERE pu.poll = $1;`, [pollRow.id]);
+
+    // Fasse alle Optionen zu einem Array wie im Response gefordert zusammen
+    const participantsArray = participants.rows.map(row => ({
+      name: row.name,
+    }));
+
+    const voicesOfPoll = await pool.query(`SELECT pv.polloption, ARRAY_AGG(v.owner) AS user_ids
+    FROM polloption_vote AS pv
+    JOIN vote AS v ON pv.vote = v.id
+    WHERE v.poll = $1
+    GROUP BY pv.polloption;`, [pollRow.id]);
+  
+    const voicesOfPollArray = voicesOfPoll.rows.map(row => ({
+      polloption: row.polloption,
+      user_ids: row.user_ids,
+    }));
+
+    // Array mit den IDs der PollOptions, bei denen fixed=true ist
+    const fixedOptions = allOptions.rows
+      .filter(option => option.fixed === true)
+      .map(option => option.id);
+
+
+    const optionsWrapper = { options: [] };
+    
+    for (const option of optionsArray) {
+      const optionId = option.id;
+      const optionText = option.text;
+      const userIds = [];
+
+      // Überprüfen, ob die Option im Ergebnis der SELECT-Anweisung enthalten ist
+      for (const row of voicesOfPollArray) {
+        if (row.polloption === String(optionId)) {
+          userIds.push(...row.user_ids);
+          break;
+        }
+      }
+      const optionData = {
+        voted: userIds,
+        worst: [] 
+      };
+      optionsWrapper.options.push(optionData);
+    }
+
+    const response = {
+      "poll": {
+        "body": {
+          "title": pollRow.title,
+          "description": pollRow.description,
+          "options": optionsArray,
+          "setting": {
+            "voices": pollRow.voices,
+            "worst": pollRow.worst,
+            "deadline": pollRow.deadline,
+          },
+          "fixed": fixedOptions,
+        },
+        "share": {
+          "link": "string",
+          "value": options.token,
+        }
+      },
+      "participants": participantsArray,
+      "options": optionsWrapper.options,
+    }
+   
     return {
       status: 200,
-      data: pollack
+      data: response,
     };
   } catch (error) {
     throw new ServerError({
@@ -72,7 +156,7 @@ module.exports.findPollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-export async function updatePollack(options) {
+export const updatePollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -102,7 +186,7 @@ export async function updatePollack(options) {
  * @throws {Error}
  * @return {Promise}
  */
-export async function deletePollack(options) {
+export const deletePollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -126,5 +210,5 @@ export async function deletePollack(options) {
   };
 }
 
-export default {addPollack, findPollack, updatePollack, deletePollack}
+export default { addPollack, findPollack, updatePollack, deletePollack }
 
