@@ -21,8 +21,8 @@
                         {{ option.text }}
                     </button>
                 </div>
-
-                <button @click.prevent="submit" class="disabled-button" :disabled="true">
+                <br><br><br>
+                <button @click.prevent="submit" :class="{ 'disabled-button': !optionCountValid }" :disabled="!optionCountValid">
                     Change Vote
                 </button>
             </form>
@@ -56,6 +56,16 @@ import axios from 'axios';
 
 export default {
     computed: {
+        optionCountValid() {
+            // Zähle alle Elemente, die ausgewählt (true) sind
+            const count = this.isOptionClicked.reduce((accumulator, currentValue) => {
+                if (currentValue === true) {
+                    return accumulator + 1;
+                }
+                return accumulator;
+            }, 0);
+            return (count <= this.voices) && (count > 0);
+        },
     },
     data() {
         return {
@@ -72,7 +82,6 @@ export default {
         };
     },
     mounted() {
-
     },
 
     methods: {
@@ -113,7 +122,7 @@ export default {
         },
         submit() {
             // Fügen Sie hier den Code ein, um die aktualisierten Daten an die Datenbank zu senden
-            
+
         }
     }
 };
@@ -186,6 +195,7 @@ input[type="datetime-local"] {
 }
 
 input[type="number"],
+
 .disabled-button {
     background-color: #ccc;
     cursor: not-allowed;
