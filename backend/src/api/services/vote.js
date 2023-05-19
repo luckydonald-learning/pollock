@@ -63,7 +63,7 @@ module.exports.findVotePollack = async (options) => {
 
     const choiceArray = choice.rows.map(row => {
       return {
-        id: row.polloption,
+        id: parseInt(row.polloption),
         vote: row.vote,
       };
     });
