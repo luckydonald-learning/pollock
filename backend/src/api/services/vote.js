@@ -1,12 +1,12 @@
-const pool = require('../../../../database/db'); // Anbindung der Datenbank
-const ServerError = require('../../lib/error');
+import pool from '../../../../database/db.js'; // Anbindung der Datenbank 
+import ServerError from '../../lib/error.js';
 /**
  * @param {Object} options
  * @param {String} options.token Share token to vote in the poll.
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.addVotePollack = async (options) => {
+export const addVotePollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -36,7 +36,7 @@ module.exports.addVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.findVotePollack = async (options) => {
+export const findVotePollack = async (options) => {
   try {
     // Holt mit dem Edit-Token grundlegende Body Daten des zugehörigen Polls
     // {"id", "name", "title", "description", "voices", "worst", "deadline","shared_token"}
@@ -144,7 +144,7 @@ module.exports.findVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.updateVotePollack = async (options) => {
+export const updateVotePollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -174,7 +174,7 @@ module.exports.updateVotePollack = async (options) => {
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.deleteVotePollack = async (options) => {
+export const deleteVotePollack = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -198,3 +198,4 @@ module.exports.deleteVotePollack = async (options) => {
   };
 };
 
+export default {addVotePollack, findVotePollack, updateVotePollack, deleteVotePollack}
