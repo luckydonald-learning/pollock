@@ -6,6 +6,7 @@
                 <label :for="tokenInputId">Insert Edit-Token here:</label>
                 <input :id="tokenInputId" type="text" v-model="token" :disabled="loading" required placeholder="Edit-Token">
                 <button type="submit" :disabled="loading" @click="loadDataFromDatabase">Search</button>
+                <br><br><br>
                 <span v-if="loading">Loading...</span>
             </form>
             <form>
@@ -13,14 +14,14 @@
                 <input type="text" id="poll_title" v-model="title" :disabled="true">
                 <br><br><br>
                 <label for="options">Vote Options:</label>
-                <div v-for="(option, index) in options" :key="index">
-                    <div class="option-container">
-                        <input type="text" :id="'option-' + index" v-model="options[index]" :disabled="true">
-                        <button class="delete-option" @click="deleteOption(index)">
-                            <div class="checkbox" :class="{ 'checked': selectedOptions.includes(index) }"></div>
-                        </button>
-                    </div>
+                <div v-for="(option, index) in options" :key="index" class="option-container">
+                    <button :id="'option-' + index"
+                        :class="{ 'green': isOptionClicked[index], 'white': !isOptionClicked[index] }"
+                        @click="toggleOption(index)" :disabled="false">
+                        {{ option.text }}
+                    </button>
                 </div>
+
                 <button @click.prevent="submit" class="disabled-button" :disabled="true">
                     Change Vote
                 </button>
@@ -35,7 +36,7 @@
             </div>
             <div class="option">
                 <label for="deadline">Deadline:</label>
-                <input type="datetime-local" id="deadline" v-model="deadline" :disabled="true">
+                <input type="input" id="deadline" v-model="deadline" :disabled="true">
             </div>
             <div class="option">
                 <label for="max-options">Maximum number of votes:</label>
@@ -54,44 +55,65 @@
 import axios from 'axios';
 
 export default {
+    computed: {
+    },
     data() {
         return {
             title: '',
             options: [],
             description: '',
             deadline: '',
-            voices: 1,
-            worst: false
+            voices: 0,
+            worst: false,
+            token: '',
+            selectedOptions: [],
+            isTitleClicked: false,
+            isOptionClicked: [],
         };
     },
     mounted() {
 
     },
+
     methods: {
         loadDataFromDatabase() {
-            axios.get('http://localhost:3000/vote/lack/4b8401ef-2f2f-4a6d-8c7b-4b392ef0739f')
+            axios.get('http://localhost:3000/vote/lack/' + this.token)
                 .then(response => {
-                    const data = response.data.rows;
-                    // Aktualisiere die Komponentendaten entsprechend
-                    this.title = data.title;
-                    this.description = data.description;
-                    this.options = data.options.map(option => option.text);
-                    this.deadline = data.deadline;
-                    this.voices = data.voices;
-                    this.worst = data.worst;
+                    const pollBody = response.data.poll.body;
+
+                    this.title = pollBody.title;
+                    this.description = pollBody.description;
+                    this.options = pollBody.options;
+                    this.deadline = pollBody.setting.deadline;
+                    this.voices = pollBody.setting.voices;
+                    this.worst = pollBody.setting.worst;
+                    this.selectedOptions = response.data.vote.choice;
+
+                    // Setze den Zustand der Buttons basierend auf den ausgewählten Optionen
+                    this.isOptionClicked = this.options.map((option) => {
+                        return this.selectedOptions.some((selectedOption) => {
+                            return selectedOption.id == option.id;
+                        })
+                    });
+                    console.log(this.isOptionClicked)
                 })
                 .catch(error => {
                     console.error(error);
                 });
         },
-        deleteOption(index) {
-            this.options.splice(index, 1);
-        },
-        addOption() {
-            this.options.push('');
+        toggleOption(index) {
+            // Überprüfen, ob der Button bereits geklickt wurde
+            if (this.isOptionClicked[index]) {
+                // Button wurde bereits geklickt, setze den Zustand auf false (weiß)
+                this.isOptionClicked[index] = false;
+            } else {
+                // Button wurde noch nicht geklickt, setze den Zustand auf true (grün)
+                this.isOptionClicked[index] = true;
+            }
         },
         submit() {
             // Fügen Sie hier den Code ein, um die aktualisierten Daten an die Datenbank zu senden
+            
         }
     }
 };
@@ -134,6 +156,10 @@ input[type="text"]:focus {
     width: 52em;
     border-color: #2196F3;
     box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+#optionselector {
+    background-color: #00557e;
 }
 
 input[type="datetime-local"] {
@@ -193,15 +219,20 @@ button {
     display: block;
     margin-top: 10px;
     padding: 10px;
+    width: 100%;
+    /* Macht alle Buttons gleich breit */
     font-size: 16px;
     background-color: #008CBA;
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Fügt eine flüssige Übergangswirkung hinzu */
 }
 
 button:hover {
     background-color: #00557e;
+    /* Ändert die Hintergrundfarbe beim Hovern */
 }
 
 .option-container {
@@ -228,14 +259,15 @@ h2 {
     margin-bottom: 1rem;
 }
 
-.checkbox {
-    width: 16px;
-    height: 16px;
-    border: 2px solid #000;
-    margin-right: 10px;
+.green {
+    background-color: green;
+    color: white;
 }
 
-.checkbox.checked {
-    background-color: blue;
+.white {
+    background-color: white;
+    color: black;
 }
 </style>
+
+
