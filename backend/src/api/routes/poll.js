@@ -27,7 +27,6 @@ router.get('/lack/:token', async (req, res, next) => {
   const options = {
     token: req.params['token']
   };
-
   try {
     const result = await poll.findPollack(options);
     res.status(result.status || 200).send(result.data);
