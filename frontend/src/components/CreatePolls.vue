@@ -9,7 +9,7 @@
         <label for="options">Vote Options:</label>
         <div v-for="(option, index) in options" :key="index">
           <div class="option-container">
-            <input type="text" :id="'option-' + index" v-model="options[index]">
+            <input type="text" :id="'option-' + index" v-model="options[index].text">
             <button class="delete-option" @click="deleteOption(index)">
               <font-awesome-icon :icon="['fas', 'trash']" />
             </button>
@@ -30,25 +30,39 @@
         <p>The options must not match others</p>
       </div>
     </div>
-
-    <div class="options-window">
-      <h2>Poll-Options</h2>
-      <div class="option">
-        <label for="description">Description:</label>
-        <input type="input" id="description" v-model="description">
+    <div class="extra-window">
+      <div class="token-window" v-show="true">
+        <div class="share-token">
+          <label for="sharetoken">Share-Token</label>
+          <input type="input" id="sharetoken" v-model="generatedShareToken" disabled="true">
+        </div>
+        <div class="admin-token">
+          <label for="admintoken">Admin-Token</label>
+          <input type="input" id="admintoken" v-model="generatedAdminToken" disabled="true">
+        </div>
       </div>
-      <div class="option">
-        <label for="deadline">Deadline:</label>
-        <input type="datetime-local" id="deadline" v-model="deadline">
+      <div id="infobox-token" class="infobox" v-show="pollCreated">
+        Save these tokens well! You will not have access to them afterwards
       </div>
-      <div class="option">
-        <label for="max-options">Maximum number of votes:</label>
-        <input type="range" id="max-options" v-model="voices" min="1" :max="options.length">
-        <span class="range-value">{{ voices }}</span>
-      </div>
-      <div class="option">
-        <label for="worst">Show worst vote too:</label>
-        <input type="checkbox" id="worst" v-model="worst">
+      <div class="options-window">
+        <h2>Poll-Options</h2>
+        <div class="option">
+          <label for="description">Description:</label>
+          <input type="input" id="description" v-model="description">
+        </div>
+        <div class="option">
+          <label for="deadline">Deadline:</label>
+          <input type="datetime-local" id="deadline" v-model="deadline">
+        </div>
+        <div class="option">
+          <label for="max-options">Maximum number of votes:</label>
+          <input type="range" id="max-options" v-model="voices" min="1" :max="options.length">
+          <span class="range-value">{{ voices }}</span>
+        </div>
+        <div class="option">
+          <label for="worst">Show worst vote too:</label>
+          <input type="checkbox" id="worst" v-model="worst">
+        </div>
       </div>
     </div>
   </div>
@@ -62,32 +76,40 @@ export default {
     return {
       title: '',
       description: '',
-      options: ['', ''],
+      options: [{text: ''}, {text: ''}],
       deadline: '',
       voices: 1,
-      worst: false
+      worst: false,
+      generatedShareToken: '',
+      generatedAdminToken: '',
     };
   },
   methods: {
     addOption() {
-      this.options.push('');
+      this.options.push({text: ""});
     },
     deleteOption(index) {
       this.options.splice(index, 1);
     },
     submit() {
-      const data = {
-        title: this.title,
-        options: this.options,
-        description: this.description,
-        deadline: this.deadline,
-        voices: this.voices,
-        worst: this.worst
-      };
-
-      axios.post('http://localhost:3000/api/lack', data)
+      console.log(this.deadline)
+      const request = {
+        "title": this.title,
+        "description": this.description,
+        "options": this.options,
+        "setting": {
+          "voices": this.voices,
+          "worst": this.worst,
+          "deadline": this.deadline,
+        },
+        "fixed": [
+          0
+        ]
+      }
+      axios.post('http://localhost:3000/poll/lack/', request)
         .then(response => {
-          console.log(response);
+          this.generatedAdminToken = response.data.admin.value;
+          this.generatedShareToken = response.data.share.value;
         })
         .catch(error => {
           console.log(error);
@@ -95,11 +117,17 @@ export default {
     }
   },
   computed: {
+    getShareToken() {
+      return 
+    },
+    getAdminToken() {
+
+    },
     areOptionsValid() {
       const optionLengthNotZero = (this.options.length >= 2);
-      const noEmptyOptions = this.options.every(option => option.trim() !== '');
+      const noEmptyOptions = this.options.every(option => option.text.trim() !== '');
       const noEmptyTitle = (this.title !== '');
-      const uniqueOptions = new Set(this.options.map(option => option.trim()));
+      const uniqueOptions = new Set(this.options.map(option => option.text.trim()));
       const optionsAllUnique = uniqueOptions.size !== this.options.length;
       // Check if any option is empty
       return optionLengthNotZero && noEmptyOptions && noEmptyTitle && !optionsAllUnique;
@@ -109,6 +137,30 @@ export default {
 </script>
 
 <style scoped>
+
+.infobox {
+  color: rgb(31, 26, 163);
+  font-weight: bold;
+}
+.token-window {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.share-token,
+.admin-token {
+  margin: 1em;
+}
+
+input[id="sharetoken"],
+input[id="admintoken"] {
+  width: 25.4em;
+  font-weight: bold;
+  text-align: center;
+  color: blue;
+}
+
 .create-poll {
   max-width: 600px;
   margin: 0 auto;
@@ -172,7 +224,7 @@ input[type="number"],
   cursor: not-allowed;
 }
 
-#description{
+#description {
   width: 50%;
 }
 
