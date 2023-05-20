@@ -1,5 +1,13 @@
 import pool from '../../../../database/db.js'; // Anbindung der Datenbank 
 import ServerError from '../../lib/error.js';
+import { uuidv7 } from 'uuidv7';
+
+
+// Generiere eine UUID7
+const generateUUID7 = () => {
+  const uuid = uuidv7();
+  return uuid;
+};
 
 /**
  * Add a new poll.
@@ -8,28 +16,55 @@ import ServerError from '../../lib/error.js';
  * @return {Promise}
  */
 export const addPollack = async (options) => {
-  // Implement your business logic here...
-  //
-  // This function should return as follows:
-  //
-  // return {
-  //   status: 200, // Or another success code.
-  //   data: [] // Optional. You can put whatever you want here.
-  // };
-  //
-  // If an error happens during your business logic implementation,
-  // you should throw an error as follows:
-  //
-  // throw new ServerError({
-  //   status: 500, // Or another error code.
-  //   error: 'Server Error' // Or another error message.
-  // });
+  const title = options.body.title;
+  const description = options.body.description;
+  const voices = options.body.setting.voices;
+  const worst = options.body.setting.worst;
+  const deadline = (options.body.setting.deadline) === '' ? undefined : (options.body.setting.deadline);
+  const polloptions = options.body.options;
+
+  const insertPoll = await pool.query(
+    `INSERT INTO "poll" ("title", "description", "voices", "worst", "deadline")
+    VALUES ($1, $2, $3, $4, $5);`,
+    [title, description, voices, worst, deadline]
+  );
+
+  const latestPollIDQuery = await pool.query(`SELECT COUNT(*) AS row_count FROM "poll";`);
+  const latestPollIDNum = parseInt(latestPollIDQuery.rows[0].row_count);
+
+  // Generiere share- und admin-token
+  const uuid7_share = generateUUID7();
+  const uuid7_admin = generateUUID7();
+
+  const insertPollToken = await pool.query(
+    `INSERT INTO "polltoken" ("admin", "share", "poll") VALUES ($1, $2, $3);`,
+    [uuid7_admin, uuid7_share, latestPollIDNum]
+  );
+
+  // Füge alle Optionen hinzu
+  for (const option of polloptions) {
+    const optionText = option.text;
+    const insertPollOption = await pool.query(`INSERT INTO "polloption" ("text", "poll") VALUES ($1, $2);`, [
+      optionText,
+      latestPollIDNum
+    ]);
+  }
 
   return {
     status: 200,
-    data: 'addPollack ok!'
+    data: {
+      admin: {
+        link: "",
+        value: uuid7_admin
+      },
+      share: {
+        link: "",
+        value: uuid7_share
+      }
+    }
   };
-}
+};
+
 
 /**
  * Return the statistics of the poll by share token.
@@ -82,7 +117,7 @@ export const findPollack = async (options) => {
     JOIN vote AS v ON pv.vote = v.id
     WHERE v.poll = $1
     GROUP BY pv.polloption;`, [pollRow.id]);
-  
+
     const voicesOfPollArray = voicesOfPoll.rows.map(row => ({
       polloption: row.polloption,
       user_ids: row.user_ids,
@@ -95,7 +130,7 @@ export const findPollack = async (options) => {
 
 
     const optionsWrapper = { options: [] };
-    
+
     for (const option of optionsArray) {
       const optionId = option.id;
       const optionText = option.text;
@@ -110,7 +145,7 @@ export const findPollack = async (options) => {
       }
       const optionData = {
         voted: userIds,
-        worst: [] 
+        worst: []
       };
       optionsWrapper.options.push(optionData);
     }
@@ -136,7 +171,7 @@ export const findPollack = async (options) => {
       "participants": participantsArray,
       "options": optionsWrapper.options,
     }
-   
+
     return {
       status: 200,
       data: response,
@@ -150,6 +185,7 @@ export const findPollack = async (options) => {
 };
 
 
+
 /**
  * @param {Object} options
  * @param {String} options.token Admin token to perform the update with
@@ -157,27 +193,31 @@ export const findPollack = async (options) => {
  * @return {Promise}
  */
 export const updatePollack = async (options) => {
-  // Implement your business logic here...
-  //
-  // This function should return as follows:
-  //
-  // return {
-  //   status: 200, // Or another success code.
-  //   data: [] // Optional. You can put whatever you want here.
-  // };
-  //
-  // If an error happens during your business logic implementation,
-  // you should throw an error as follows:
-  //
-  // throw new ServerError({
-  //   status: 500, // Or another error code.
-  //   error: 'Server Error' // Or another error message.
-  // });
+  const tokensFound = await pool.query(`SELECT COUNT(*) AS token_count
+    FROM polltoken
+    WHERE admin = $1;
+    `, [options.token]);
+
+  console.log("FOUND:" + JSON.stringify(tokensFound));
+  if (!tokensFound) {
+    throw new Error('Pollack not found');
+  }
 
   return {
     status: 200,
     data: 'updatePollack ok!'
   };
+}
+
+
+const countAdminTokens = async (adminToken) => {
+  const tokensFound = await pool.query(`SELECT COUNT(*) AS token_count
+    FROM polltoken
+    WHERE admin = $1;
+    `, [adminToken]);
+
+  console.log("FOUND:" + JSON.stringify(tokensFound));
+  return tokensFound;
 }
 
 /**
@@ -187,22 +227,10 @@ export const updatePollack = async (options) => {
  * @return {Promise}
  */
 export const deletePollack = async (options) => {
-  // Implement your business logic here...
-  //
-  // This function should return as follows:
-  //
-  // return {
-  //   status: 200, // Or another success code.
-  //   data: [] // Optional. You can put whatever you want here.
-  // };
-  //
-  // If an error happens during your business logic implementation,
-  // you should throw an error as follows:
-  //
-  // throw new ServerError({
-  //   status: 500, // Or another error code.
-  //   error: 'Server Error' // Or another error message.
-  // });
+  const tokensFound = countAdminTokens(options.token) > 0;
+  if (!tokensFound) {
+    throw new Error('Pollack not found');
+  }
 
   return {
     status: 200,
